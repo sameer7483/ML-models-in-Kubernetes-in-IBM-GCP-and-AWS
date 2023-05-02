@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flair-inference
+  labels:
+    app: flair-inference
+    name: flair-inference
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flair-inference
+  template:
+    metadata:
+      labels:
+        app: flair-inference
+    spec:
+      containers:
+        - name: flair-inference-container
+          image: sameer7483/cml-project:latest
+          command: ["python3", "sentiment.py"]
+          ports:
+            - protocol: TCP
+              containerPort: 5000
+          imagePullPolicy: Always
