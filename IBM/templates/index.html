@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TEXT CLASSIFICATION</title>
+</head>
+<body>
+	<div style="text-align: center;">
+		<div style="display: inline-block; text-align: left;">
+			<h1>News Text Classification</h1>
+			<div style="margin-bottom: 100px;"> </div>
+			<form method="post" enctype="multipart/form-data" action="{{ url_for('predict') }}" style="margin-bottom: 100px;">
+				<div style="margin-bottom: 15px;">
+					<label for="userinput">Enter the text:</label>
+				</div>
+				<textarea rows="4" cols="50" name="userinput" id="userinput"></textarea>
+				<div style="margin-top: 30px;">
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+			<p>Prediction is : <span style="color: red;">{{predicted_value}}</span></p>
+		</div>
+		</div>
+</body>
+</html>
