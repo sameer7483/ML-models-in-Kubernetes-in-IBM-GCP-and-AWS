@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Flair Sentiment Analysis</title>
+</head>
+<body>
+	<h1>Flair Sentiment Analysis</h1>
+	<form method="post" enctype="multipart/form-data" action="{{ url_for('predict') }}">
+		<label for="userinput">Enter the text:</label>
+		<input type="text" name="userinput" id="userinput">
+		<input type="submit" value="Submit">
+	</form>
+    <p>Prediction is : {{predicted_value}}</p>
+</body>
+</html>
