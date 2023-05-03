@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lstm-inference
+  labels:
+    app: lstm-inference
+    name: lstm-inference
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lstm-inference
+  template:
+    metadata:
+      labels:
+        app: lstm-inference
+    spec:
+      containers:
+        - name: lstm-inference-container
+          image: sameer7483/cml-project-2:latest
+          command: ["python3", "sentiment2.py"]
+          ports:
+            - protocol: TCP
+              containerPort: 5000
+          volumeMounts:
+            - name: sa6142-mnist-pv
+              mountPath: "/models"
+          imagePullPolicy: Always
+      volumes:
+        - name: sa6142-mnist-pv
+          persistentVolumeClaim:
+            claimName: sa6142-mnist-pvc

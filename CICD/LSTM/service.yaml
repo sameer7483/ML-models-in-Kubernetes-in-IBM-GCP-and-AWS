@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lstm-inference-service
+spec:
+  selector:
+    app: lstm-inference
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: LoadBalancer

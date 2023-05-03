@@ -12,9 +12,14 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-ADD sentiment.py /app/sentiment.py
+# ADD sentiment.py /app/sentiment.py
+
+
+ADD train.py /app/train.py
+ADD sentiment2.py /app/sentiment2.py
 
 RUN mkdir ./templates
+RUN mkdir ./data
 
 ADD ./templates/index.html /app/templates/index.html
 

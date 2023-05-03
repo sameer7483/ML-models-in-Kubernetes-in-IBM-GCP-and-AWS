@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sentiment-trainer
+spec:
+  template:
+    spec:
+      containers:
+        - name: sentiment-trainer-container
+          image: sameer7483/cml-project-2:latest
+          command: ["python3", "train.py"]
+          volumeMounts:
+            - name: sa6142-mnist-pv
+              mountPath: "/models"
+      volumes:
+        - name: sa6142-mnist-pv
+          persistentVolumeClaim:
+            claimName: sa6142-mnist-pvc
+      restartPolicy: Never
+  backoffLimit: 4
