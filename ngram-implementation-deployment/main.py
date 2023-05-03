@@ -22,7 +22,6 @@ vocab.set_default_index(vocab["<unk>"])
 text_pipeline = lambda x: vocab(tokenizer(x))
 label_pipeline = lambda x: int(x) - 1
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def collate_batch(batch):
@@ -59,11 +58,20 @@ class TextClassificationModel(nn.Module):
         embedded = self.embedding(text, offsets)
         return self.fc(embedded)
 
+train_iter = AG_NEWS(split='train')
+num_class = len(set([label for (label, text) in train_iter]))
+vocab_size = len(vocab)
+emsize = 64
+model = TextClassificationModel(vocab_size, emsize, num_class).to(device) 
+# Hyperparameters
+EPOCHS = 10 # epoch
+LR = 5  # learning rate
+BATCH_SIZE = 64 # batch size for training
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=LR)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
 
-
-
-
-def train(dataloader):
+def train(dataloader, epoch):
     model.train()
     total_acc, total_count = 0, 0
     log_interval = 500
@@ -100,19 +108,6 @@ def evaluate(dataloader):
 
 
 def start():
-    train_iter = AG_NEWS(split='train')
-    num_class = len(set([label for (label, text) in train_iter]))
-    vocab_size = len(vocab)
-    emsize = 64
-    model = TextClassificationModel(vocab_size, emsize, num_class).to(device)    
-    # Hyperparameters
-    EPOCHS = 10 # epoch
-    LR = 5  # learning rate
-    BATCH_SIZE = 64 # batch size for training
-
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=LR)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
     total_accu = None
     train_iter, test_iter = AG_NEWS()
     train_dataset = to_map_style_dataset(train_iter)
@@ -129,7 +124,7 @@ def start():
                                 shuffle=True, collate_fn=collate_batch)    
     for epoch in range(1, EPOCHS + 1):
         epoch_start_time = time.time()
-        train(train_dataloader)
+        train(train_dataloader, epoch)
         accu_val = evaluate(valid_dataloader)
         if total_accu is not None and total_accu > accu_val:
             scheduler.step()
