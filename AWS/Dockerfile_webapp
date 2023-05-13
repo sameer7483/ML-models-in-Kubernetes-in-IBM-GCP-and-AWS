@@ -1,0 +1,32 @@
+FROM pytorch/pytorch:latest
+
+ENV PORT 8000
+EXPOSE $PORT
+
+WORKDIR /app
+
+ADD requirements.txt /app
+RUN pip3 install -r requirements.txt
+
+RUN mkdir /model
+ADD model/. /model
+ENV MODEL_DIR /model
+
+
+RUN mkdir ./templates
+ADD ./templates/index.html /app/templates/index.html
+
+
+# do this last since ill be changing this most frequently as i develop
+ADD __init__.py /app/
+ADD lstm.py /app/
+ADD main.py /app/
+
+
+# Run the service
+CMD [ "python", "main.py" ]
+
+
+# docker build -t web-app .
+# docker run -p 8000:8000 -it web-app
+# docker run -it web-app 2>&1 | tee caraline-docker-run.out

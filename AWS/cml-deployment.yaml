@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-deploy-cml
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cml-app
+  template:
+    metadata:
+      labels:
+        app: cml-app
+    spec:
+      initContainers:
+      - name: train-cml
+        image: cbruz/cml-training:v1
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /model
+      containers:
+      - name: web-cml
+        image: cbruz/cml-web-app:v3
+        resources:
+          requests:
+            cpu: 100m
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /model
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service-cml
+spec:
+  selector:
+    app: cml-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer
