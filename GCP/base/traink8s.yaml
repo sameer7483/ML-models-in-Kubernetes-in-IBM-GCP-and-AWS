@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train
+spec:
+  template:
+    spec:
+      containers:
+      - name: train
+        image: us.gcr.io/news-classification-385619/ngramtrain
+        command: ["python3", "main.py"]
+        volumeMounts:
+        - name: model
+          mountPath: /tmp/files
+      restartPolicy: Never
+      volumes:
+        - name: model
+          persistentVolumeClaim:
+            claimName: my-pvc-claim
+

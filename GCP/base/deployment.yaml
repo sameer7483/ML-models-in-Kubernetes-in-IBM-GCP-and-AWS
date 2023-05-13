@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infer
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: score-app
+  template:
+    metadata:
+      labels:
+        app: score-app
+    spec:
+        containers:
+        - name: infer
+          image:  us.gcr.io/news-classification-385619/ngraminfer
+          command: ["python3", "infer.py"]
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+          - name: model
+            mountPath: /tmp/files
+        volumes:
+          - name: model
+            persistentVolumeClaim:
+              claimName: my-pvc-claim
